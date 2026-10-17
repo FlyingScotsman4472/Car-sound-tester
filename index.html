@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0f18" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>RevRoom – Engine Sound Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0e15;--surface:#161b26;--surface2:#1e2533;--text:#f3f6fa;--muted:#aab5c6;--accent:#ff6b45;--stroke:#30384b;--green:#58d3ab}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(ellipse at 80% -10%,#50241e 0%,transparent 44%),var(--bg);min-height:100vh}
+main{max-width:650px;margin:auto;padding:26px 19px calc(45px + env(safe-area-inset-bottom))}header{display:flex;align-items:center;gap:12px;padding:8px 0 20px}.mark{font-size:30px;display:grid;place-items:center;background:linear-gradient(135deg,#f77d44,#a42832);border-radius:16px;width:54px;height:54px;box-shadow:0 8px 25px #ad4d2e44}h1{font-size:27px;letter-spacing:-1.4px;margin:0}header p{margin:2px 0;color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase}.panel{background:linear-gradient(150deg,#1a2130,#141924);border:1px solid var(--stroke);border-radius:23px;padding:21px;margin-bottom:15px;box-shadow:0 12px 40px #0002}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.7px;color:var(--muted);font-weight:700}.status{font-size:12px;padding:7px 11px;border:1px solid #6a3b2c;background:#3a2320;color:#ffc39a;border-radius:30px;font-weight:650}.status.on{border-color:#366c58;background:#17392e;color:#8de5bc}
+.engineTitle{font-size:24px;font-weight:750;letter-spacing:-.7px;margin:16px 0 7px}.desc{color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 16px}select{width:100%;padding:14px 42px 14px 14px;border-radius:13px;border:1px solid #4b5364;color:var(--text);background:var(--surface2);font-size:15px;font-weight:650;margin-top:11px}option{color:#101725}
+.gauge{position:relative;margin:0 auto 4px;width:min(100%,390px);aspect-ratio:2/1.2;overflow:hidden}.gauge svg{width:100%;height:100%;display:block}.gaugevalue{position:absolute;bottom:8%;width:100%;text-align:center}.number{font-size:48px;font-variant-numeric:tabular-nums;letter-spacing:-2px;font-weight:760;line-height:1}.unit{color:var(--muted);font-size:12px;letter-spacing:2px;margin-top:6px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.stat{padding:12px 8px;text-align:center;border-radius:12px;background:#101520;border:1px solid #283344}.stat .big{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}.stat .small{color:var(--muted);font-size:10px;margin-top:6px}.modes{display:flex;gap:7px;margin:14px 0 19px}.mode{flex:1;background:#111724;border:1px solid var(--stroke);border-radius:12px;color:#c9d2df;padding:12px 7px;font:inherit;font-size:13px;font-weight:680;cursor:pointer}.mode.active{border-color:#f07e59;background:#402620;color:#ffe8df}.primary{width:100%;border:0;border-radius:16px;background:linear-gradient(135deg,#ff9853,#f15447);color:#24120d;padding:17px;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 12px 25px #f1544728}.primary.stop{background:#313b4b;color:white;box-shadow:none;border:1px solid #546075}.subbutton{width:100%;padding:12px;background:#233047;color:#ecf0f5;border:1px solid #52607a;border-radius:12px;font-weight:700;margin-top:9px;cursor:pointer}.hide{display:none!important}
+.controlTitle{font-weight:700;margin-bottom:8px}.trackrow{display:flex;align-items:center;gap:14px}.range{width:100%;accent-color:#ff784e;cursor:pointer;height:24px}.percent{color:var(--muted);width:49px;text-align:right;font-size:14px;font-variant-numeric:tabular-nums}.pedal{width:100%;height:110px;touch-action:none;user-select:none;background:#253044;border:1px solid #526783;color:white;border-radius:17px;font-weight:800;font-size:20px;margin:10px 0 4px;cursor:pointer}.pedal:active,.pedal.held{background:linear-gradient(#ed7f50,#ab392d);border-color:#ffb27c}.help{color:var(--muted);font-size:12px;line-height:1.6;margin:10px 0 0}.notes{padding:15px 17px;border-radius:16px;background:#181b24;border:1px solid #383e4c;font-size:12px;line-height:1.6;color:#bfc8d6;margin-top:18px}.notes strong{color:#eff2f7}.smalllink{color:#ffad86}.gpsState{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:#a7a8ab}.dot.live{background:#54dfae;box-shadow:0 0 0 4px #54dfae22}.warning{color:#fbd8a2}.sample{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.sample input{max-width:100%;font-size:12px}.sample button{border:1px solid #52607a;border-radius:8px;padding:7px 10px;color:#e7ecf4;background:#252f40}.foot{color:#939eae;font-size:12px;line-height:1.6;margin-top:15px}
+</style>
+</head>
+<body>
+<main>
+ <header><div class="mark">♬</div><div><h1>RevRoom</h1><p>Your car. A different soundtrack.</p></div></header>
+ <section class="panel">
+  <div class="topline"><span class="eyebrow">Engine profile</span><span class="status" id="status">Audio off</span></div>
+  <select id="engine" aria-label="Choose engine">
+   <option value="maserati">Maserati 4.2 V8 · F136</option>
+   <option value="ferrarif1">Ferrari F2004 · 3.0 V10</option>
+   <option value="lfa">Lexus LFA · 4.8 V10</option>
+   <option value="ferrari12">Ferrari 812 · 6.5 V12</option>
+   <option value="amg">Mercedes-AMG · 6.2 V8</option>
+  </select>
+  <div class="engineTitle" id="name">Maserati 4.2 V8</div>
+  <p class="desc" id="description">Ferrari-built F136, with a cross-plane V8 burble that rises into a metallic Italian growl. Synthesised approximation, not a genuine recording.</p>
+  <div class="gauge" aria-label="Simulated engine RPM gauge">
+   <svg viewBox="0 0 370 225" aria-hidden="true">
+    <path d="M40 175 A145 145 0 0 1 330 175" stroke="#293346" stroke-width="22" fill="none" stroke-linecap="round"/>
+    <path d="M40 175 A145 145 0 0 1 330 175" stroke="#ff684a" stroke-width="22" fill="none" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100" id="arcmeter"/>
+    <g id="ticks"></g>
+    <text x="185" y="50" text-anchor="middle" fill="#aab5c6" font-size="10" letter-spacing="2">SIMULATED ENGINE</text>
+   </svg>
+   <div class="gaugevalue"><div class="number" id="rpm">820</div><div class="unit">RPM</div></div>
+  </div>
+  <div class="stats">
+   <div class="stat"><div class="big" id="speed">0</div><div class="small">GPS KM/H</div></div>
+   <div class="stat"><div class="big" id="throttleReadout">0%</div><div class="small">SOUND LOAD</div></div>
+   <div class="stat"><div class="big" id="gear">–</div><div class="small">SIM. GEAR</div></div>
+  </div>
+ </section>
+ <section class="panel">
+  <div class="eyebrow">Driving input</div>
+  <div class="modes" role="group" aria-label="Choose control mode">
+   <button type="button" class="mode active" data-mode="manual">Manual</button>
+   <button type="button" class="mode" data-mode="gps">GPS drive</button>
+   <button type="button" class="mode" data-mode="demo">Demo</button>
+  </div>
+  <div id="manualSettings">
+    <div class="topline"><div class="controlTitle">Throttle</div><div class="percent" id="value">0%</div></div>
+    <div class="trackrow"><input class="range" id="slider" aria-label="Throttle percentage" type="range" min="0" max="100" value="0" step="1"></div>
+    <button type="button" class="pedal" id="pedal">HOLD TO REV ↑</button>
+    <p class="help">For parked testing. Use the slider or hold the pedal. Releasing the pedal returns to idle.</p>
+  </div>
+  <div id="gpsSettings" class="hide">
+   <p class="help">Uses your phone's location speed and changes in speed to <strong>estimate</strong> acceleration and simulate engine revs. It cannot read your Forester's actual RPM or throttle, and the Forester's CVT makes rev matching particularly imprecise.</p>
+   <div class="gpsState"><span class="dot" id="gpsDot"></span><span id="gpsText">GPS off</span></div>
+   <button type="button" class="subbutton" id="gpsButton">Enable GPS</button>
+   <p class="help warning">Needs an HTTPS website, Safari location permission and the page open in the foreground. Use only while parked or when you are a passenger. It may stop when the phone locks.</p>
+  </div>
+  <div id="demoSettings" class="hide"><p class="help">A repeating acceleration, upshift and deceleration sequence. Doesn't need any sensors or movement.</p></div>
+  <button type="button" id="start" class="primary">▶ START ENGINE</button>
+  <p class="help" id="audionote">Connect your iPhone to the car's Bluetooth audio first, or test through your phone speaker. Begin at low volume.</p>
+ </section>
+ <section class="panel">
+  <div class="eyebrow">Sound tuning</div>
+  <div class="topline" style="margin-top:16px"><span class="controlTitle">Engine volume</span><span class="percent" id="voltext">35%</span></div>
+  <input class="range" id="volume" aria-label="Sound volume" type="range" min="0" max="100" value="35">
+  <div class="topline" style="margin-top:16px"><span class="controlTitle">Intake / exhaust character</span><span class="percent" id="growltext">60%</span></div>
+  <input class="range" id="growl" aria-label="Growl amount" type="range" min="0" max="100" value="60">
+  <div class="controlTitle" style="margin-top:17px">Optional: use your own engine recording</div>
+  <p class="help">For a more authentic Maserati sound, load a short, steady-RPM recording that you're allowed to use. It loops and changes pitch with RPM. A sample is not included.</p>
+  <div class="sample"><input type="file" id="sample" accept="audio/*" aria-label="Choose engine audio recording"><button type="button" id="clearSample">Clear sample</button></div>
+  <div class="topline" style="margin-top:12px"><span class="controlTitle">Sample's recorded RPM</span><span class="percent" id="sampleRpmText">3000</span></div>
+  <input class="range" type="range" id="sampleRpm" min="600" max="16000" step="100" value="3000" aria-label="RPM of the imported recording">
+  <div class="gpsState" id="sampleMessage">Synthetic sound is selected</div>
+ </section>
+ <div class="notes"><strong>What this can and can't do:</strong> Free, no adaptor, no subscription, and no ECU connection. The Maserati preset is a generated approximation rather than a real recorded F136. Manual and demo modes work without GPS. GPS mode follows road speed and acceleration, <strong>not actual engine revs</strong>. Exact RPM matching needs vehicle telemetry such as an OBD2 adaptor.<br><br><strong>NSW P-platers:</strong> Current NSW rules prohibit P1/P2 drivers from using any mobile phone function while driving, including Bluetooth audio. If you hold a P licence, use this only while safely parked or when you are a passenger. Never mask traffic, horns or emergency vehicles.</div>
+ <p class="foot">REVROOM • Free standalone prototype • Audio and calculation occur on the device; this page does not upload your location or recordings. Sound is for cabin entertainment, not a modification to the real engine.</p>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const engines={
+ maserati:{name:'Maserati 4.2 V8',desc:'Ferrari-built F136 with a cross-plane V8 burble that rises into a metallic Italian growl. Synthesised approximation, not a genuine recording.',idle:820,red:7600,orders:[1,2,4,8,12],weights:[.43,.65,.8,.18,.05],types:['sawtooth','triangle','sawtooth','sine','sine'],filter:2100,wobble:.10},
+ ferrarif1:{name:'Ferrari F2004 V10',desc:'High, hard-edged, early-2000s Formula 1 V10 scream. Simulated 19,000 RPM redline.',idle:4500,red:19000,orders:[2.5,5,10,15,20],weights:[.25,.9,.35,.19,.06],types:['sawtooth','sawtooth','triangle','sine','sine'],filter:5500,wobble:.03},
+ lfa:{name:'Lexus LFA V10',desc:'Sharp-edged, metallic naturally aspirated V10 with a rising, harmonic howl.',idle:850,red:9000,orders:[2.5,5,10,15,20],weights:[.35,.72,.37,.21,.05],types:['sawtooth','sawtooth','triangle','sine','sine'],filter:3300,wobble:.035},
+ ferrari12:{name:'Ferrari 812 V12',desc:'Silky V12 idle turning into a bright, layered high-RPM scream.',idle:780,red:8900,orders:[3,6,12,18,24],weights:[.4,.75,.26,.13,.04],types:['triangle','sawtooth','triangle','sine','sine'],filter:3800,wobble:.025},
+ amg:{name:'AMG 6.2 V8',desc:'Low-frequency thunder, uneven V8 bass and aggressive intake sound.',idle:680,red:7300,orders:[1,2,4,8,12],weights:[.7,.6,.55,.12,.03],types:['sawtooth','triangle','sawtooth','sine','sine'],filter:1250,wobble:.13}
+};
+let chosen='maserati',mode='manual',audio=null,playing=false,currentRPM=engines.maserati.idle,targetRPM=engines.maserati.idle,throttle=0,gpsId=null,gpsSpeed=0,gpsAcceleration=0,gpsLast=null,gpsTimestamp=0,gear='–',sampleBuffer=null,sampleSource=null,demoStart=0,manualHeld=false;
+const oscillatorNodes=[];
+function ticks(){const g=$('ticks');let s='';for(let i=0;i<=10;i++){let theta=(180+i*18)*Math.PI/180; // arcs top half, from left (180deg) to right (360deg)
+  let x1=185+120*Math.cos(theta),y1=175+120*Math.sin(theta),x2=185+130*Math.cos(theta),y2=175+130*Math.sin(theta);
+  s+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${i>=9?'#ff7753':'#768194'}" stroke-width="${i%2===0?2.4:1.3}"/>`;
+ } g.innerHTML=s;}
+// Small synthesiser with five tunable oscillators and a filtered broadband intake layer.
+function initAudio(){
+ const AudioClass=window.AudioContext||window.webkitAudioContext;
+ if(!AudioClass){alert('This browser does not support Web Audio. Try Safari on iPhone.');return false;}
+ const ctx=new AudioClass();
+ const master=ctx.createGain();master.gain.value=0;
+ const compressor=ctx.createDynamicsCompressor();compressor.threshold.value=-22;compressor.knee.value=12;compressor.ratio.value=3;compressor.attack.value=.012;compressor.release.value=.16;
+ const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=1800;filter.Q.value=.65;
+ const waves=ctx.createWaveShaper();let curve=new Float32Array(1024);for(let i=0;i<curve.length;i++){let x=i/512-1;curve[i]=Math.tanh(x*1.65)/Math.tanh(1.65)}waves.curve=curve;waves.oversample='2x';
+ filter.connect(waves);waves.connect(compressor);compressor.connect(master);master.connect(ctx.destination);
+ for(let i=0;i<5;i++){let o=ctx.createOscillator(),g=ctx.createGain();g.gain.value=0;o.type='sawtooth';o.connect(g);g.connect(filter);o.start();oscillatorNodes.push({o,g});}
+ let nbuf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate),a=nbuf.getChannelData(0);for(let j=0;j<a.length;j++)a[j]=Math.random()*2-1;
+ let noise=ctx.createBufferSource();noise.buffer=nbuf;noise.loop=true;
+ let nfilter=ctx.createBiquadFilter();nfilter.type='bandpass';nfilter.frequency.value=700;nfilter.Q.value=.38;
+ let ngain=ctx.createGain();ngain.gain.value=0;
+ noise.connect(nfilter);nfilter.connect(ngain);ngain.connect(filter);noise.start();
+ const sampleGain=ctx.createGain();sampleGain.gain.value=0;sampleGain.connect(compressor);
+ audio={ctx,master,filter,ngain,nfilter,sampleGain,noise};
+ return true;
+}
+function stopSample(){if(sampleSource){try{sampleSource.stop()}catch(e){}try{sampleSource.disconnect()}catch(e){}sampleSource=null;}}
+function playSample(){if(!audio||!sampleBuffer)return;stopSample();sampleSource=audio.ctx.createBufferSource();sampleSource.buffer=sampleBuffer;sampleSource.loop=true;sampleSource.connect(audio.sampleGain);sampleSource.start(0);}
+function setLiveSound(now){if(!audio)return;let e=engines[chosen],norm=clamp((currentRPM-e.idle)/(e.red-e.idle),0,1),growl=Number($('growl').value)/100,vol=Number($('volume').value)/100,ctx=audio.ctx;
+ const wob=1+e.wobble*(.55+.45*(1-norm))*Math.sin(performance.now()/97)*(.6+Math.min(throttle,.4));
+ const sampleOn=!!(sampleBuffer&&sampleSource);
+ for(let i=0;i<oscillatorNodes.length;i++){
+  let {o,g}=oscillatorNodes[i];o.type=e.types[i];o.frequency.setTargetAtTime(Math.max(25,(currentRPM/60)*e.orders[i]*wob),now,.028);
+  const strength=e.weights[i]*(.29+.71*(.22+throttle*.78)) * (.72+.36*norm) * (i<3? .5+growl*.65:1.13-growl*.32);
+  g.gain.setTargetAtTime(sampleOn?0:strength*.08,now,.045);
+ }
+ audio.filter.frequency.setTargetAtTime(clamp(e.filter*(.35+.94*norm+.24*throttle),350,9000),now,.04);
+ audio.nfilter.frequency.setTargetAtTime(320+2000*norm,now,.06);
+ audio.ngain.gain.setTargetAtTime(sampleOn?0:Math.min(.085,.008+growl*.025+throttle*.04),now,.075);
+ audio.sampleGain.gain.setTargetAtTime(sampleOn? .48*(.35+.65*throttle):0,now,.05);
+ if(sampleSource){let sampleRpm=Number($('sampleRpm').value);sampleSource.playbackRate.setTargetAtTime(clamp(currentRPM/sampleRpm,.25,4),now,.04);}
+ audio.master.gain.setTargetAtTime(vol*.80,now,.05);
+}
+function updateMode(){for(let b of document.querySelectorAll('.mode'))b.classList.toggle('active',b.dataset.mode===mode);$('manualSettings').classList.toggle('hide',mode!=='manual');$('gpsSettings').classList.toggle('hide',mode!=='gps');$('demoSettings').classList.toggle('hide',mode!=='demo');if(mode!=='gps')stopGps();if(mode==='demo')demoStart=performance.now();}
+function startGps(){if(!('geolocation'in navigator)){gpsError('Location not available on this browser');return;}
+ if(!window.isSecureContext){gpsError('GPS requires an HTTPS website, not a downloaded file');return;}
+ if(gpsId!=null)return;
+ $('gpsText').textContent='Acquiring GPS…';
+ gpsId=navigator.geolocation.watchPosition(pos=>{
+  const c=pos.coords,ts=pos.timestamp;
+  if(!Number.isFinite(c.accuracy)||c.accuracy>150){gpsError('Weak GPS signal: accuracy over 150 m');return;}
+  let kph=Number.isFinite(c.speed)&&c.speed>=0 ? c.speed*3.6 : null;
+  if(kph===null&&gpsLast&&Number.isFinite(c.latitude)&&Number.isFinite(c.longitude)){
+    const dt=(ts-gpsLast.ts)/1000;
+    if(dt>.5){const lat1=c.latitude*Math.PI/180,lat2=gpsLast.lat*Math.PI/180,dLat=lat2-lat1,dLon=(c.longitude-gpsLast.lon)*Math.PI/180;
+      const h=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;kph=2*6371000*Math.asin(Math.min(1,Math.sqrt(h)))/dt*3.6;
+    }
+  }
+  gpsLast={lat:c.latitude,lon:c.longitude,ts};
+  if(kph===null)return;
+  kph=clamp(kph,0,260);
+  const seconds=(ts-gpsTimestamp)/1000;
+  if(gpsTimestamp&&seconds>.35&&seconds<30){const acceleration=(kph-gpsSpeed)/seconds;gpsAcceleration=clamp(gpsAcceleration*.55+acceleration*.45,-15,15);}
+  gpsSpeed=gpsSpeed*.35+kph*.65;gpsTimestamp=ts;
+  $('gpsDot').classList.add('live');$('gpsText').textContent='GPS active · approx. '+Math.round(c.accuracy)+' m accuracy';$('gpsButton').textContent='Disable GPS';
+ },err=>{gpsError('GPS: '+err.message);},{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
+}
+function gpsError(str){$('gpsDot').classList.remove('live');$('gpsText').textContent=str;}
+function stopGps(){if(gpsId!==null){navigator.geolocation.clearWatch(gpsId);gpsId=null;}$('gpsDot').classList.remove('live');$('gpsText').textContent='GPS off';$('gpsButton').textContent='Enable GPS';gpsSpeed=0;gpsAcceleration=0;gpsTimestamp=0;gpsLast=null;}
+function tick(){let e=engines[chosen];let manual=Number($('slider').value)/100;
+ if(mode==='manual'){
+  throttle=manualHeld?1:manual;
+  targetRPM=e.idle+(e.red-e.idle)*Math.pow(throttle,.84);
+  gear='–';
+ }else if(mode==='demo'){
+   let t=((performance.now()-demoStart)/1000)%13;
+   if(t<2){throttle=.1+t*.32;targetRPM=e.idle+(e.red-e.idle)*(t/2)*.68;gear='1';}
+   else if(t<2.5){throttle=.14;targetRPM=e.idle+(e.red-e.idle)*.39;gear='2';}
+   else if(t<6){throttle=.75;targetRPM=e.idle+(e.red-e.idle)*(.43+(t-2.5)/3.5*.5);gear='2';}
+   else if(t<6.4){throttle=.12;targetRPM=e.idle+(e.red-e.idle)*.58;gear='3';}
+   else if(t<9.3){throttle=.7;targetRPM=e.idle+(e.red-e.idle)*(.58+(t-6.4)/2.9*.35);gear='3';}
+   else {throttle=.01;targetRPM=e.idle+(e.red-e.idle)*Math.max(0,.9-(t-9.3)*.31);gear='–';}
+ }else{
+  // Model *estimated* Subaru engine demand from GPS speed and speed gradient.
+  // This is not an ECU/RPM measurement. The CVT can vary rpm independently.
+  if(gpsTimestamp&&Date.now()-gpsTimestamp>12000){gpsError('GPS stale · reacquire signal');gpsAcceleration*=.95;}
+  const estimatedSubaruRPM=clamp(760+Math.max(0,gpsSpeed)*12+Math.max(0,gpsAcceleration)*370,700,5800);
+  const frac=clamp((estimatedSubaruRPM-760)/(5800-760),0,1);
+  targetRPM=e.idle+(e.red-e.idle)*frac;
+  throttle=clamp(.13+Math.max(0,gpsAcceleration)/8+.08*(gpsSpeed>5?1:0),0,1);
+  gear=gpsSpeed<3?'–':(gpsSpeed<22?'1':gpsSpeed<43?'2':gpsSpeed<70?'3':gpsSpeed<98?'4':'5');
+ }
+ let response=(mode==='gps'?.10:.15);
+ currentRPM+=(targetRPM-currentRPM)*response;
+ currentRPM=clamp(currentRPM,e.idle,e.red);
+ const frac=(currentRPM-e.idle)/(e.red-e.idle);$('rpm').textContent=Math.round(currentRPM).toLocaleString('en-AU');$('arcmeter').setAttribute('stroke-dasharray',`${(frac*100).toFixed(2)} 100`);
+ $('throttleReadout').textContent=Math.round(throttle*100)+'%';$('gear').textContent=gear;$('speed').textContent=mode==='gps'&&gpsTimestamp?Math.round(gpsSpeed):'–';
+ if(playing&&audio)setLiveSound(audio.ctx.currentTime);
+ requestAnimationFrame(tick);
+}
+function updateEngine(){chosen=$('engine').value;let e=engines[chosen];$('name').textContent=e.name;$('description').textContent=e.desc;currentRPM=e.idle;targetRPM=e.idle;}
+function resetAudio(){if(audio){audio.master.gain.setTargetAtTime(0,audio.ctx.currentTime,.015);setTimeout(()=>{if(audio){stopSample();try{audio.noise.stop()}catch(e){}audio.ctx.close();audio=null;oscillatorNodes.length=0;}},180);}playing=false;$('status').textContent='Audio off';$('status').classList.remove('on');$('start').textContent='▶ START ENGINE';$('start').classList.remove('stop');}
+$('start').addEventListener('click',async()=>{if(playing){resetAudio();return;}
+ try{if(audio){return;}if(!initAudio())return;await audio.ctx.resume();playing=true;$('status').textContent='Engine running';$('status').classList.add('on');$('start').textContent='■ STOP ENGINE';$('start').classList.add('stop');if(sampleBuffer)playSample();}catch(err){alert('Could not start audio: '+err.message);resetAudio();}
+});
+$('engine').addEventListener('change',updateEngine);
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;updateMode()}));
+$('gpsButton').addEventListener('click',()=>gpsId==null?startGps():stopGps());
+$('slider').addEventListener('input',()=>{$('value').textContent=$('slider').value+'%';});
+let pedal=$('pedal');pedal.addEventListener('pointerdown',e=>{e.preventDefault();manualHeld=true;pedal.classList.add('held');try{pedal.setPointerCapture(e.pointerId);}catch(err){}});
+function pedalOff(){manualHeld=false;pedal.classList.remove('held')}pedal.addEventListener('pointerup',pedalOff);pedal.addEventListener('pointercancel',pedalOff);window.addEventListener('blur',pedalOff);
+$('volume').addEventListener('input',()=>{$('voltext').textContent=$('volume').value+'%'});
+$('growl').addEventListener('input',()=>{$('growltext').textContent=$('growl').value+'%'});
+$('sampleRpm').addEventListener('input',()=>{$('sampleRpmText').textContent=$('sampleRpm').value;});
+$('sample').addEventListener('change',async ev=>{
+ const f=ev.target.files?.[0];if(!f)return;
+ if(f.size>30*1024*1024){$('sampleMessage').textContent='File too large. Choose under 30 MB.';return;}
+ try{
+   let AudioClass=window.AudioContext||window.webkitAudioContext;
+   let temp=audio?.ctx||new AudioClass();let buf=await f.arrayBuffer();let decoded=await temp.decodeAudioData(buf);
+   if(decoded.duration>45){$('sampleMessage').textContent='Use a short clip under 45 seconds.';if(!audio)temp.close();return;}
+   sampleBuffer=decoded;$('sampleMessage').textContent='Loaded: '+f.name+' ('+decoded.duration.toFixed(1)+' s). Pitch will track RPM.';
+   if(playing)playSample();if(!audio)temp.close();
+ }catch(err){$('sampleMessage').textContent='Could not decode this audio file: '+err.message;}
+});
+$('clearSample').addEventListener('click',()=>{sampleBuffer=null;stopSample();$('sample').value='';$('sampleMessage').textContent='Synthetic sound is selected';});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&manualHeld)pedalOff();});
+window.addEventListener('beforeunload',()=>{if(gpsId!==null)stopGps();});
+updateEngine();ticks();requestAnimationFrame(tick);
+</script>
+</body>
+</html>
